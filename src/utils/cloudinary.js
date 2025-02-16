@@ -1,10 +1,16 @@
 import {v2 as cloudinary} from 'cloudinary'
+import { log } from 'console';
+import fs from "fs"
 
- // Configuration
- cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View API Keys' above to copy your API secret
+
+// cloudinary.config({
+//     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//     api_key: process.env.CLOUDINARY_API_KEY,
+//     api_secret: process.env.CLOUDINARY_API_SECRET,
+//     secure: true
+//   });
+cloudinary.config({
+    cloudinary_url: process.env.CLOUDINARY_URL
 });
 
 const uploadOnCloudinary = async(localFilePath)=>{
@@ -16,9 +22,11 @@ const uploadOnCloudinary = async(localFilePath)=>{
         })
 
         console.log("file uploaded on cloudinary",response.url);
+        fs.unlinkSync(localFilePath);
         return response;
         
     } catch (error) {
+        console.log(error)
         fs.unlinkSync(localFilePath)//remove the locally saved temp file as upload failed
         return null
     }
